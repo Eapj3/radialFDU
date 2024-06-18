@@ -71,3 +71,6 @@ HIP67620.ipynb
 
 # Other stuff
 docs/usage_example.ipynb
+
+# pyrightconfig
+./pyrightconfig.json
