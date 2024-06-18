@@ -9,6 +9,7 @@ from radial import orbit, dataset, rv_model, prior
 import scipy.signal as ss
 import matplotlib.pyplot as plt
 import matplotlib.markers as mrk
+import matplotlib.gridspec as gridspec
 import lmfit
 import corner
 import emcee
@@ -87,7 +88,7 @@ class FullOrbit(object):
             self.t.append(dsk.t.to(u.d).value)
             self.rv.append(dsk.rv.to(u.m / u.s).value)
             self.rv_unc.append(dsk.rv_unc.to(u.m / u.s).value)
-            self.meta.append(dsk.table.meta)
+            self.meta.append(dsk.   table.meta)
 
         self.use_add_sigma = use_add_sigma
 
@@ -172,13 +173,14 @@ class FullOrbit(object):
             raise NotImplementedError('Plot of emcee samples is not supported'
                                       'yet.')
 
+
         # Use matplotlib's default symbols if ``None`` is passed.
         if symbols is None:
-            markers = mrk.MarkerStyle()
+            markers = mrk.MarkerStyle("")
             symbols = markers.filled_markers
 
         fig = plt.figure(figsize=(6, 5))
-        gs = plt.GridSpec(2, 1, height_ratios=(4, 1))
+        gs = gridspec.GridSpec(2, 1, height_ratios=(4, 1))
         ax_fit = fig.add_subplot(gs[0])
 
         self.residuals = []
