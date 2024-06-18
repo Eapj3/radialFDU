@@ -1,0 +1,15 @@
+name: radial
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - astropy
+  - corner
+  - emcee
+  - matplotlib
+  - scipy
+  - jupyter
+  - numpy
+  - pip
+  - pip:
+	- lmfit==1.3.1
