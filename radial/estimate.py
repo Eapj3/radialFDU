@@ -574,16 +574,16 @@ class FullOrbit(object):
 
         # The labels
         if self.parametrization == 'mc10':
-            self.labels = ['\log{K}', '\log{T}', 't_0', '\omega',
+            self.labels = [r'\log{K}', r'\log{T}', 't_0', r'\omega',
                            'e']
         elif self.parametrization == 'exofast':
-            self.labels = ['\log{K}', '\log{T}', 't_0',
-                           '\sqrt{e} \cos{\omega}',
-                           '\sqrt{e} \sin{\omega}']
+            self.labels = [r'\log{K}', r'\log{T}', 't_0',
+                           r'\sqrt{e} \cos{\omega}',
+                           r'\sqrt{e} \sin{\omega}']
         for i in range(self.n_ds):
-            self.labels.append('\gamma_{}'.format(i))
+            self.labels.append(r'\gamma_{}'.format(i))
             if self.use_add_sigma is True:
-                self.labels.append('\log{\sigma_%s}' % str(i))
+                self.labels.append(r'\log{\sigma_%s}' % str(i))
 
         # Creating the pos array
         pos = []
@@ -740,7 +740,7 @@ class FullOrbit(object):
                   (result[i][0], result[i][1], result[i][2]))
 
         # Work out the human-friendly results
-        hf_labels = ['K', 'T', 't_0', '\omega', 'e']
+        hf_labels = ['K', 'T', 't_0', r'\omega', 'e']
         units = ['m / s', 'd', 'd', 'deg', ' ']
         hf_chains = np.array(self.emcee_chains)         # K and T from log to
         hf_chains[:, 0:2] = 10 ** (hf_chains[:, 0:2])   # linear
@@ -792,7 +792,7 @@ class FullOrbit(object):
                   (hf_result[i][0], hf_result[i][1], hf_result[i][2], units[i]))
 
         try:
-            print('m \sin{i}= %.5f^{+%.5f}_{-%.5f} solMass' %
+            print(r'm \sin{i}= %.5f^{+%.5f}_{-%.5f} solMass' %
                   (hf_m_a[0][0], hf_m_a[0][1], hf_m_a[0][2]))
             print('a= %.5f^{+%.5f}_{-%.5f} AU' %
                   (hf_m_a[1][0], hf_m_a[1][1], hf_m_a[1][2]))
