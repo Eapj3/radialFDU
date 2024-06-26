@@ -7,6 +7,7 @@ import numpy as np
 import astropy.table as tb
 import astropy.units as u
 import matplotlib.pyplot as plt
+import pandas as pd
 
 """
 This module is used to manage radial velocities datasets.
@@ -39,10 +40,6 @@ class RVDataSet(object):
     skiprows : ``int``, optional
         Number of rows to skip from the data file. Default is 0.
 
-    delimiter : ``str`` or ``None``, optional
-        String that is used to separate the columns in the data file. If
-        ``None``, uses the default value from ``numpy.loadtxt``. Default is
-        ``None``.
 
     t_offset : ``float``, ``astropy.units.Quantity`` or ``None``, optional
         Numerical offset to be summed to the time array. If ``None``, no offset
@@ -75,7 +72,7 @@ class RVDataSet(object):
         made. Default is ``None``.
     """
     def __init__(self, file, t_col=0, rv_col=1, rv_unc_col=2, skiprows=0,
-                 delimiter=None, t_offset=None, rv_offset=None, t_unit=None,
+                 t_offset=None, rv_offset=None, t_unit=None,
                  rv_unit=None, instrument_name=None, target_name=None,
                  other_meta=None):
 
@@ -103,12 +100,13 @@ class RVDataSet(object):
             self.target_name = target_name
 
         # Read the data from file
-        self.t = np.loadtxt(file, usecols=(t_col,), skiprows=skiprows,
-                            delimiter=delimiter) * self.t_unit
-        self.rv = np.loadtxt(file, usecols=(rv_col,), skiprows=skiprows,
-                             delimiter=delimiter) * self.rv_unit
-        self.rv_unc = np.loadtxt(file, usecols=(rv_unc_col,), skiprows=skiprows,
-                                 delimiter=delimiter) * self.rv_unit
+        data_frame = pd.read_csv(file, skiprows=skiprows)
+
+        self.t = np.array(data_frame.iloc[:, t_col]) * self.t_unit
+
+        self.rv = np.array(data_frame.iloc[:, rv_col]) * self.rv_unit
+
+        self.rv_unc = np.array(data_frame.iloc[:, rv_unc_col]) * self.rv_unit
 
         # The offsets
         if t_offset is None:
