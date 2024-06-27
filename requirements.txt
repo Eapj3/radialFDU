@@ -6,3 +6,4 @@ emcee>=2.2
 corner>=2.0
 lmfit>=0.9.6
 pandas
+threadpoolctl
