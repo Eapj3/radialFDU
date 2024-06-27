@@ -10,7 +10,7 @@ import scipy.optimize as sp
 """
 This module computes the radial velocities of a massive object being orbited by
 a secondary massive object, and is based on the formalism from Murray & Correia
-(2011), available freely at http://arxiv.org/abs/1009.1738. The equation numbers
+(2011), available freely at https://arxiv.org/abs/1009.1738. The equation numbers
 are from this article, unless otherwise noted.
 """
 
