@@ -4,6 +4,7 @@
 from __future__ import (division, print_function, absolute_import,
                         unicode_literals)
 
+from threadpoolctl import ThreadpoolController
 import numpy as np
 from radial import orbit, dataset, rv_model, prior
 import scipy.signal as ss
@@ -15,6 +16,8 @@ import corner
 import emcee
 import astropy.units as u
 import astropy.constants as c
+from multiprocessing import Pool
+
 
 """
 This code contains routines to estimate the orbital parameters of a binary
@@ -616,10 +619,12 @@ class FullOrbit(object):
             pos.append(np.array(pos_n))
 
         self.ndim = len(pos[0])
-
-        sampler = emcee.EnsembleSampler(nwalkers, self.ndim, self.lnprob,
-                                        a=p_scale, threads=nthreads)
-        sampler.run_mcmc(pos, nsteps)
+        controller = ThreadpoolController()
+        with controller.limit(limits=1, user_api="blas"):
+            with Pool() as pool_:
+                sampler = emcee.EnsembleSampler(nwalkers, self.ndim, self.lnprob,
+                                        a=p_scale, pool=pool_)
+                sampler.run_mcmc(pos, nsteps)
         self.sampler = sampler
         return sampler
 
