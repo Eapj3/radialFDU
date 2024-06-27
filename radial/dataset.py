@@ -71,9 +71,9 @@ class RVDataSet(object):
         Other metadata to be saved in the table. If ``None``, no addition is
         made. Default is ``None``.
     """
-    def __init__(self, file, t_col=0, rv_col=1, rv_unc_col=2, skiprows=0,
+    def __init__(self, file, target_name, t_col=0, rv_col=1, rv_unc_col=2, skiprows=0,
                  t_offset=None, rv_offset=None, t_unit=None,
-                 rv_unit=None, instrument_name=None, target_name=None,
+                 rv_unit=None, instrument_name=None,
                  other_meta=None):
 
         # TODO: Add option to set the plotting parameters (symbol, color etc.)
@@ -101,6 +101,7 @@ class RVDataSet(object):
 
         # Read the data from file
         data_frame = pd.read_csv(file, skiprows=skiprows)
+        data_frame = data_frame[data_frame["Target"] == self.target_name]
 
         self.t = np.array(data_frame.iloc[:, t_col]) * self.t_unit
 
