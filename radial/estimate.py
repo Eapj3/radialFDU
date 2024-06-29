@@ -4,6 +4,7 @@
 from __future__ import (division, print_function, absolute_import,
                         unicode_literals)
 
+from threadpoolctl import ThreadpoolController
 import numpy as np
 from radial import orbit, dataset, rv_model, prior
 import scipy.signal as ss
@@ -15,6 +16,8 @@ import corner
 import emcee
 import astropy.units as u
 import astropy.constants as c
+from multiprocessing import Pool
+import os
 
 """
 This code contains routines to estimate the orbital parameters of a binary
@@ -538,7 +541,7 @@ class FullOrbit(object):
         return lp - 0.5 * self.lnlike(params)
 
     # Using emcee to estimate the orbital parameters
-    def emcee_orbit(self, nwalkers=20, nsteps=1000, p_scale=2.0, nthreads=1,
+    def emcee_orbit(self, nwalkers=20, nsteps=1000, p_scale=2.0, threads_per_worker=2,
                     ballsizes=None):
         """
         Calculates samples of parameters that best fit the signal rv.
@@ -554,8 +557,11 @@ class FullOrbit(object):
         p_scale : ``float``, optional
             The proposal scale parameter. Default is 2.0.
 
-        nthreads : ``int``
-            Number of threads in your machine
+        threads_per_worker : ``int``
+            Number of threads per worker. There will be as many workers
+            such that each uses exactly threads_per_worker threads. For
+            full utilization choose a number that divides the number
+            of logical processors in your machine.
 
         ballsizes : ``dict``
             The one-dimensional size of the volume from which to generate a
@@ -616,10 +622,12 @@ class FullOrbit(object):
             pos.append(np.array(pos_n))
 
         self.ndim = len(pos[0])
-
-        sampler = emcee.EnsembleSampler(nwalkers, self.ndim, self.lnprob,
-                                        a=p_scale, threads=nthreads)
-        sampler.run_mcmc(pos, nsteps)
+        controller = ThreadpoolController()
+        with controller.limit(limits=threads_per_worker, user_api='blas'):
+            with Pool(os.cpu_count() // threads_per_worker) as pool_:
+                sampler = emcee.EnsembleSampler(nwalkers, self.ndim, self.lnprob, pool=pool_,
+                                                moves=emcee.moves.StretchMove(a=p_scale))
+                sampler.run_mcmc(pos, nsteps)
         self.sampler = sampler
         return sampler
 

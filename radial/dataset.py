@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-
 import numpy as np
 import astropy.table as tb
 import astropy.units as u
@@ -11,7 +10,6 @@ import matplotlib.pyplot as plt
 """
 This module is used to manage radial velocities datasets.
 """
-
 
 # The RV dataset class
 class RVDataSet(object):
